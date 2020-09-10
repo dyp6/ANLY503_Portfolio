@@ -6,5 +6,11 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
+    - text: "Class Projects"
+      href: classProj.html
+    - text: "Research Projects"
+      href: researchProj.html
+    - text: "Professional Projects"
+      href: workProj.html
 
 output_dir: "docs"
