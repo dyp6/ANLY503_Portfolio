@@ -9,7 +9,6 @@ navbar:
       href: about.html
     - text: "Class Projects"
       icon: fa-book
-      href: classProj.html
       menu:
         - text: "Analytic Data Visualization (ANLY503)"
           icon: fas fa-chart-line
