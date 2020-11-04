@@ -1,0 +1,310 @@
+---
+title: "Geospatial Assignment ANLY 503"
+author: "Douglas Post"
+date: "10/31/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)  
+library(reticulate)  
+knitr::opts_chunk$set(warning=FALSE,message=FALSE)
+```
+
+```{python,warning=FALSE}
+import pandas as pd
+# Read in presidential election data
+presElec = pd.read_csv("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/countypres_2000-2016.csv")
+# Filter for only democratic candidates
+demPres = presElec.loc[presElec.party=="democrat",:]
+# Calculate proportions of democratic votes for each county
+demPres.loc[:,"propWon"] = presElec.loc[:,"candidatevotes"]/\
+                            presElec.loc[:,"totalvotes"]
+# Filter for only 2008, 2012, and 2016
+demPres = demPres.loc[demPres.year.isin(["2008","2012","2016"]),
+                      ["year","state","county",
+                         "FIPS","candidate","party",
+                         "propWon"]]
+demPres = demPres.reset_index(drop=True)
+demPres.FIPS = demPres.FIPS.astype(str)
+# Convert FIPS to standardized 5-digit codes
+for i in range(len(demPres)):
+    if len(demPres.loc[i,"FIPS"][:-2]) == 4:
+        demPres.loc[i,"FIPS"] = "0" + demPres.loc[i,"FIPS"][:-2]
+    else:
+        demPres.loc[i,"FIPS"] = demPres.loc[i,"FIPS"][:-2]
+# Read in unemployment data
+unemRate = pd.read_excel("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/Unemployment.xls",
+sheet_name="Unemployment Med HH Income",skiprows=[0,1,2,3,4,5,6],
+header=0)
+# Pull out only 2008, 2012, and 2016 data
+unemRate = unemRate.loc[:,["FIPStxt","Stabr","area_name",
+                           "Unemployment_rate_2008",
+                           "Unemployment_rate_2012",
+                           "Unemployment_rate_2016"]]
+# Reformat the data, so it is in same format as presidential election data
+unems = [x for x in unemRate.Unemployment_rate_2008.values]+\
+        [x for x in unemRate.Unemployment_rate_2012.values]+\
+        [x for x in unemRate.Unemployment_rate_2016.values]
+
+year = ["2008"]*len(unemRate) +\
+        ["2012"]*len(unemRate) +\
+        ["2016"]*len(unemRate)
+
+unemRates = pd.DataFrame({"year":year,
+                         "FIPS":[x for x in unemRate.FIPStxt.values]*3,
+                         "Stabr":[x for x in unemRate.Stabr.values]*3,
+                         "area_name":[x for x in unemRate.area_name.values]*3,
+                         "Unemployment_rate":unems})
+
+unemRates.FIPS = unemRates.FIPS.astype(str)
+# Format FIPS to standardized 5-digit format
+for i in range(len(unemRates)):
+    if len(unemRates.loc[i,"FIPS"]) == 4:
+        unemRates.loc[i,"FIPS"] = "0" + unemRates.loc[i,"FIPS"]
+
+unemRates.year = unemRates.year.astype(int)
+# Merge unemployment and presidential election data
+joined = pd.merge(demPres,unemRates,on=["year","FIPS"])
+joined.to_csv("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/MappingData.csv")
+```
+
+```{r, warning=FALSE}
+library(rgdal)
+library(sf)
+library(tmap)
+
+UScounty <- readOGR("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/tl_2019_us_county-1","tl_2019_us_county")
+joined <- read.csv("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/MappingData.csv")
+joined$X <- NULL
+joined$FIPS <- as.character(joined$FIPS)
+for(i in 1:nrow(joined)){
+  if(nchar(joined[i,"FIPS"]) == 4){
+    joined[i,"FIPS"] = paste("0",joined[i,"FIPS"],sep="")
+  }
+}
+# Remove Alaska, Hawaii, Guam, American Samoa, Northern Mariana Islands,
+# Puerto Rico, Virgin Islands
+UScounty <- subset(UScounty, !(STATEFP %in% c("02","15","60","66","69","72","78")))
+UScounty$FIPS <- paste(UScounty$STATEFP,UScounty$COUNTYFP,sep = "")
+UScounty08 <- merge(UScounty,subset(joined,year==2008),
+                    by="FIPS",all.x=TRUE)
+UScounty12 <- merge(UScounty,subset(joined,year==2012),
+                    by="FIPS",all.x=TRUE)
+UScounty16 <- merge(UScounty,subset(joined,year==2016),
+                    by="FIPS",all.x=TRUE)
+UScounty08<-UScounty08[!(is.na(UScounty08$propWon)),]
+UScounty12<-UScounty12[!(is.na(UScounty12$propWon)),]
+UScounty16<-UScounty16[!(is.na(UScounty16$propWon)),]
+```
+```{r}
+Cali08 <- subset(UScounty08,state=="California")
+Cali12 <- subset(UScounty12,state=="California")
+Cali16 <- subset(UScounty16,state=="California")
+Penn08 <- subset(UScounty08,state=="Pennsylvania")
+Penn12 <- subset(UScounty12,state=="Pennsylvania")
+Penn16 <- subset(UScounty16,state=="Pennsylvania")
+Tex08 <- subset(UScounty08,state=="Texas")
+Tex12 <- subset(UScounty12,state=="Texas")
+Tex16 <- subset(UScounty16,state=="Texas")
+```
+
+# 2008, 2012 & 2016 Unemployment and Proportions Democratic in Presidential Election 
+
+```{r, echo=FALSE}
+tmap_mode("plot")
+CProp08 <- tm_shape(Cali08) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2008 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("RIGHT","TOP"),
+            legend.title.fontface = 2,
+            legend.height = 0.5,
+            legend.width = 0.33)
+CProp12 <- tm_shape(Cali12) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2012 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("RIGHT","TOP"),
+            legend.title.fontface = 2,
+            legend.height = 0.5,
+            legend.width = 0.33)
+CProp16 <- tm_shape(Cali16) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2016 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("RIGHT","TOP"),
+            legend.title.fontface = 2,
+            legend.height = 0.5,
+            legend.width = 0.33)
+
+CUnem08 <- tm_shape(Cali08) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2008 Unemployement (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("RIGHT","TOP"),
+            legend.title.fontface = 2,
+            legend.height = 0.5,
+            legend.width = 0.33)
+CUnem12 <- tm_shape(Cali12) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2012 Unemployment (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("RIGHT","TOP"),
+            legend.title.fontface = 2,
+            legend.height = 0.5,
+            legend.width = 0.33)
+CUnem16 <- tm_shape(Cali16) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2016 Unemployment (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("RIGHT","TOP"),
+            legend.title.fontface = 2,
+            legend.height = 0.5,
+            legend.width = 0.33)
+```
+
+## California
+
+```{r,echo=FALSE}
+tmap_arrange(CProp08,CProp12,CProp16,CUnem08,CUnem12,CUnem16,ncol = 3,
+             nrow = 2,widths = c(0.33,0.33,0.33))
+```
+
+```{r,echo=FALSE}
+tmap_mode("plot")
+TProp08 <- tm_shape(Tex08) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2008 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","BOTTOM"),
+            legend.title.fontface = 2,
+            legend.height = 0.3,
+            legend.width = 0.33)
+TProp12 <- tm_shape(Tex12) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2012 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","BOTTOM"),
+            legend.title.fontface = 2,
+            legend.height = 0.3,
+            legend.width = 0.33)
+TProp16 <- tm_shape(Tex16) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2016 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","BOTTOM"),
+            legend.title.fontface = 2,
+            legend.height = 0.3,
+            legend.width = 0.33)
+
+TUnem08 <- tm_shape(Tex08) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2008 Unemployement (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","BOTTOM"),
+            legend.title.fontface = 2,
+            legend.height = 0.3,
+            legend.width = 0.33)
+TUnem12 <- tm_shape(Tex12) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2012 Unemployment (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","BOTTOM"),
+            legend.title.fontface = 2,
+            legend.height = 0.3,
+            legend.width = 0.33)
+TUnem16 <- tm_shape(Tex16) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2016 Unemployment (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","BOTTOM"),
+            legend.title.fontface = 2,
+            legend.height = 0.3,
+            legend.width = 0.33)
+```
+
+## Texas
+
+```{r,echo=FALSE}
+tmap_arrange(TProp08,TProp12,TProp16,TUnem08,TUnem12,TUnem16,ncol = 3,
+             nrow = 2,widths = c(0.33,0.33,0.33))
+```
+
+```{r,echo=FALSE}
+tmap_mode("plot")
+PProp08 <- tm_shape(Penn08) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2008 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1))  +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","TOP"),
+            legend.outside = TRUE,
+            legend.title.fontface = 2,
+            legend.width = 0.33)
+PProp12 <- tm_shape(Penn12) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2012 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1))  +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","TOP"),
+            legend.outside = TRUE,
+            legend.title.fontface = 2,
+            legend.width = 0.33)
+PProp16 <- tm_shape(Penn16) +
+  tm_fill("propWon",palette = "RdBu",
+          title="2016 Prop. Democratic",
+          breaks=c(0,0.15,0.4,0.5,0.6,0.85,1))  +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","TOP"),
+            legend.title.fontface = 2,
+            legend.outside = TRUE,
+            legend.width = 0.33)
+
+PUnem08 <- tm_shape(Penn08) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2008 Unemployement (%)",
+          breaks=c(0,5,10,15,20,25,30))  +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","TOP"),
+            legend.title.fontface = 2,
+            legend.outside = TRUE,
+            legend.width = 0.33)
+PUnem12 <- tm_shape(Penn12) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2012 Unemployment (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","TOP"),
+            legend.title.fontface = 2,
+            legend.outside = TRUE,
+            legend.width = 0.33)
+PUnem16 <- tm_shape(Penn16) +
+  tm_fill("Unemployment_rate",palette = "Greys",
+          title="2016 Unemployment (%)",
+          breaks=c(0,5,10,15,20,25,30)) +
+  tm_borders(col="black") +
+  tm_layout(legend.position = c("LEFT","TOP"),
+            legend.title.fontface = 2,
+            legend.outside = TRUE,
+            legend.width = 0.33)
+```
+
+## Pennsylvania
+
+```{r,echo=FALSE}
+tmap_arrange(PProp08,PProp12,PProp16,PUnem08,PUnem12,PUnem16,ncol = 3,
+             nrow = 2,widths = c(0.33,0.33,0.33))
+```
