@@ -1,0 +1,27 @@
+---
+title: "Assignment 3"
+author: "Douglas Post"
+date: "12/8/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r,out.height="40%",out.width="80%"}
+img_1_path <- "images/Assignment_31.png"
+img_2_path <- "images/Assignment_32.png"
+img_3_path <- "images/Assignment_33.png"
+img_4_path <- "images/Assignment_34.png"
+knitr::include_graphics(img_1_path)
+```
+```{r,out.height="40%",out.width="80%"}
+knitr::include_graphics(img_2_path)
+```
+```{r,out.height="40%",out.width="80%"}
+knitr::include_graphics(img_3_path)
+```
+```{r,out.height="40%",out.width="80%"}
+knitr::include_graphics(img_4_path)
+```

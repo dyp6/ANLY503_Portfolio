@@ -1,0 +1,42 @@
+---
+title: "Assignment 5: Task 5"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(scales)
+source("MyRtheme.R")
+```
+
+```{r,eval=FALSE}
+aa <- read.csv("data/accounts_analytical.csv")
+new_a <- read.csv("data/new_aa.csv")
+trans <- read.csv("data/transactions.csv")
+c_accts <- new_a[new_a$c_card == "Y","account_id"]
+trans$c_card <- rep("Y",nrow(trans))
+# Takes a really long time to run
+for(i in 1:nrow(trans)){
+  if(trans[i,"account_id"] %in% c_accts){
+    trans[i,"c_card"] = "Y"
+  } else {
+    trans[i,"c_card"] = "N"
+  }
+}
+write.csv(trans,"data/trans_new.csv")
+```
+
+```{r,echo=FALSE}
+trans <- read.csv("data/trans_new.csv")
+```
+```{r}
+b <- ggplot(trans, aes(x=c_card)) + geom_bar(aes(fill=type))
+b + ylab("Num Transactions") + 
+  labs(fill = "Trans. Type") + 
+  xlab("Credit Card?") + 
+  ggtitle("Types of Transaction by whether Account has Credit Card") +
+  mytheme() + 
+  scale_fill_viridis_d()
+```
+
+Yes there is an issue with the validity of the data because the majority of the credit transactions come from accounts without a credit card.

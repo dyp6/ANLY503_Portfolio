@@ -1,0 +1,24 @@
+---
+title: "Assignment 5: Task 4"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(scales)
+source("MyRtheme.R")
+```
+
+```{r,fig.width=14,fig.height=8}
+trans <- read.csv("data/transactions.csv")
+counts <- data.frame(table(trans$account_id))
+maxNumTrans <- trans[trans$account_id == counts[max(counts$Freq),"Var1"],]
+maxNumTrans$date <- as.Date(maxNumTrans$date)
+maxNumTrans$type <- as.factor(maxNumTrans$type)
+ggplot(maxNumTrans,aes(x = date, y = balance)) + 
+  geom_point(aes(fill=type),pch=21,colour="black", size = 3) +
+  scale_fill_viridis_d() +
+  geom_line(size =0.7) + xlab("Date") + ylab("Account Balance") +
+  ggtitle("Account Transactions Over Time") + labs(fill = "Trans. Type") +
+  mytheme()
+```

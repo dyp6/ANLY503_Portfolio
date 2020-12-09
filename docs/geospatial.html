@@ -15,7 +15,7 @@
 
 <title>Geospatial Assignment ANLY 503</title>
 
-<script src="site_libs/header-attrs-2.3/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -25,8 +25,19 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
 <link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -290,7 +301,7 @@ $(document).ready(function () {
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     <span class="fa fa-book"></span>
      
-    Class Projects
+    Class Work
      
     <span class="caret"></span>
   </a>
@@ -299,9 +310,54 @@ $(document).ready(function () {
       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
         <span class="fas fa fas fa-chart-line"></span>
          
-        Analytic Data Visualization (ANLY503)
+        Analytic Data Visualization Homeworks
       </a>
       <ul class="dropdown-menu" role="menu">
+        <li>
+          <a href="Assignment_1.html">
+            <span class="far fa far fa-edit"></span>
+             
+            First Sketching Homework
+          </a>
+        </li>
+        <li>
+          <a href="Assignment_3.html">
+            <span class="fas fa fas fa-edit"></span>
+             
+            Second Sketching Homework
+          </a>
+        </li>
+        <li class="dropdown-submenu">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+            <span class="far fa far fa-chart-bar"></span>
+             
+            Static Visualization Homework
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <a href="task1.html">First Task</a>
+            </li>
+            <li>
+              <a href="task2.html">Second Task</a>
+            </li>
+            <li>
+              <a href="task3.html">Third Task</a>
+            </li>
+            <li>
+              <a href="task4.html">Fourth Task</a>
+            </li>
+            <li>
+              <a href="task5.html">Fifth Task</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="networks.html">
+            <span class="fas fa fas fa-project-diagram"></span>
+             
+            Network Creation Homework
+          </a>
+        </li>
         <li>
           <a href="geospatial.html">
             <span class="far fa far fa-map"></span>
@@ -313,12 +369,7 @@ $(document).ready(function () {
     </li>
   </ul>
 </li>
-<li>
-  <a href="researchProj.html">Research Projects</a>
-</li>
-<li>
-  <a href="workProj.html">Professional Projects</a>
-</li>
+<li class="dropdown-header">Data Visualization Final Project</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -340,26 +391,14 @@ $(document).ready(function () {
 
 <pre class="python"><code>import pandas as pd
 # Read in presidential election data
-presElec = pd.read_csv(&quot;C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/countypres_2000-2016.csv&quot;)
+presElec = pd.read_csv(&quot;data/countypres_2000-2016.csv&quot;)
 # Filter for only democratic candidates
 demPres = presElec.loc[presElec.party==&quot;democrat&quot;,:]
 # Calculate proportions of democratic votes for each county
 demPres.loc[:,&quot;propWon&quot;] = presElec.loc[:,&quot;candidatevotes&quot;]/\
                             presElec.loc[:,&quot;totalvotes&quot;]
-# Filter for only 2008, 2012, and 2016</code></pre>
-<pre><code>## C:\Users\postd\anaconda3\lib\site-packages\pandas\core\indexing.py:845: SettingWithCopyWarning: 
-## A value is trying to be set on a copy of a slice from a DataFrame.
-## Try using .loc[row_indexer,col_indexer] = value instead
-## 
-## See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-##   self.obj[key] = _infer_fill_value(value)
-## C:\Users\postd\anaconda3\lib\site-packages\pandas\core\indexing.py:966: SettingWithCopyWarning: 
-## A value is trying to be set on a copy of a slice from a DataFrame.
-## Try using .loc[row_indexer,col_indexer] = value instead
-## 
-## See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
-##   self.obj[item] = s</code></pre>
-<pre class="python"><code>demPres = demPres.loc[demPres.year.isin([&quot;2008&quot;,&quot;2012&quot;,&quot;2016&quot;]),
+# Filter for only 2008, 2012, and 2016
+demPres = demPres.loc[demPres.year.isin([&quot;2008&quot;,&quot;2012&quot;,&quot;2016&quot;]),
                       [&quot;year&quot;,&quot;state&quot;,&quot;county&quot;,
                          &quot;FIPS&quot;,&quot;candidate&quot;,&quot;party&quot;,
                          &quot;propWon&quot;]]
@@ -372,7 +411,7 @@ for i in range(len(demPres)):
     else:
         demPres.loc[i,&quot;FIPS&quot;] = demPres.loc[i,&quot;FIPS&quot;][:-2]
 # Read in unemployment data
-unemRate = pd.read_excel(&quot;C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/Unemployment.xls&quot;,
+unemRate = pd.read_excel(&quot;data/Unemployment.xls&quot;,
 sheet_name=&quot;Unemployment Med HH Income&quot;,skiprows=[0,1,2,3,4,5,6],
 header=0)
 # Pull out only 2008, 2012, and 2016 data
@@ -404,18 +443,15 @@ for i in range(len(unemRates)):
 unemRates.year = unemRates.year.astype(int)
 # Merge unemployment and presidential election data
 joined = pd.merge(demPres,unemRates,on=[&quot;year&quot;,&quot;FIPS&quot;])
-joined.to_csv(&quot;C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/MappingData.csv&quot;)</code></pre>
+joined.to_csv(&quot;data/MappingData.csv&quot;)</code></pre>
 <pre class="r"><code>library(rgdal)
 library(sf)
 library(tmap)
 
-UScounty &lt;- readOGR(&quot;C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/tl_2019_us_county-1&quot;,&quot;tl_2019_us_county&quot;)</code></pre>
-<pre><code>## OGR data source with driver: ESRI Shapefile 
-## Source: &quot;C:\Users\postd\Documents\anly503-fall2020-a6-dyp6\data\tl_2019_us_county-1&quot;, layer: &quot;tl_2019_us_county&quot;
-## with 3233 features
-## It has 17 fields
-## Integer64 fields read as strings:  ALAND AWATER</code></pre>
-<pre class="r"><code>joined &lt;- read.csv(&quot;C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/MappingData.csv&quot;)
+UScounty &lt;-tigris::counties()
+UScounty &lt;- as(UScounty,&quot;Spatial&quot;)
+#UScounty &lt;- readOGR(&quot;data/tl_2019_us_county-1&quot;,&quot;tl_2019_us_county&quot;)
+joined &lt;- read.csv(&quot;data/MappingData.csv&quot;)
 joined$X &lt;- NULL
 joined$FIPS &lt;- as.character(joined$FIPS)
 for(i in 1:nrow(joined)){
@@ -470,7 +506,7 @@ Tex16 &lt;- subset(UScounty16,state==&quot;Texas&quot;)</code></pre>
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();

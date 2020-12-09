@@ -1,0 +1,15 @@
+---
+title: "Assignment 5:Task 2"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(scales)
+source("MyRtheme.R")
+aa <- read.csv("data/accounts_analytical.csv")
+# Loan Distribution
+loans <- subset(aa, !(is.na(loan_amount)))
+h <- ggplot(loans,aes(x=loan_amount)) + geom_histogram(color = "black", fill = "gray")
+h + scale_x_continuous(labels = comma) + ylab("Frequency") + xlab("Loan Amount") + ggtitle("Distribution of Loan Amounts") + mytheme()
+```

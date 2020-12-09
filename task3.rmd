@@ -1,0 +1,28 @@
+---
+title: "Assignment 5: Task 3"
+output: html_document
+---
+
+```{r}
+library(ggplot2)
+library(scales)
+source("MyRtheme.R")
+```
+
+```{r,message=FALSE,warning=FALSE}
+aa <- read.csv("data/accounts_analytical.csv")
+loans <- subset(aa, !(is.na(loan_amount)))
+loans$AcctToLoan <- as.Date(loans$loan_date) - as.Date(loans$acct_creation_date)
+s <- ggplot(loans,aes(x=AcctToLoan,y=loan_amount)) +
+  scale_fill_viridis_d() +
+  geom_point(aes(fill=loan_default),pch=21,
+             size =3,alpha=0.6,colour="black")
+s + scale_y_continuous(labels=comma) + 
+  xlab("Days b/w Acct. Creation and Loan") + 
+  ylab("Loan Amount") +
+  ggtitle("Account to Loan Time with Loan Amount and Default Status") +
+  labs(fill = "Loan Defaulted") + mytheme()
+```
+
+There doesn't seem to be any relationship between the time between account creation and acquiring a loan and the Loan Amount. There could be a slight relationship between the amount of a loan and whether or not the loan is defaulted, it looks like higher loans have a slightly higher chance of default based on the plot.
+

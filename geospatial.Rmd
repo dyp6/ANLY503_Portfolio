@@ -11,10 +11,10 @@ library(reticulate)
 knitr::opts_chunk$set(warning=FALSE,message=FALSE)
 ```
 
-```{python,warning=FALSE}
+```{python, eval=FALSE}
 import pandas as pd
 # Read in presidential election data
-presElec = pd.read_csv("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/countypres_2000-2016.csv")
+presElec = pd.read_csv("data/countypres_2000-2016.csv")
 # Filter for only democratic candidates
 demPres = presElec.loc[presElec.party=="democrat",:]
 # Calculate proportions of democratic votes for each county
@@ -34,7 +34,7 @@ for i in range(len(demPres)):
     else:
         demPres.loc[i,"FIPS"] = demPres.loc[i,"FIPS"][:-2]
 # Read in unemployment data
-unemRate = pd.read_excel("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/Unemployment.xls",
+unemRate = pd.read_excel("data/Unemployment.xls",
 sheet_name="Unemployment Med HH Income",skiprows=[0,1,2,3,4,5,6],
 header=0)
 # Pull out only 2008, 2012, and 2016 data
@@ -66,16 +66,18 @@ for i in range(len(unemRates)):
 unemRates.year = unemRates.year.astype(int)
 # Merge unemployment and presidential election data
 joined = pd.merge(demPres,unemRates,on=["year","FIPS"])
-joined.to_csv("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/MappingData.csv")
+joined.to_csv("data/MappingData.csv")
 ```
 
-```{r, warning=FALSE}
+```{r, warning=FALSE,results=FALSE}
 library(rgdal)
 library(sf)
 library(tmap)
 
-UScounty <- readOGR("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/tl_2019_us_county-1","tl_2019_us_county")
-joined <- read.csv("C://Users/postd/Documents/anly503-fall2020-a6-dyp6/data/MappingData.csv")
+UScounty <-tigris::counties()
+UScounty <- as(UScounty,"Spatial")
+#UScounty <- readOGR("data/tl_2019_us_county-1","tl_2019_us_county")
+joined <- read.csv("data/MappingData.csv")
 joined$X <- NULL
 joined$FIPS <- as.character(joined$FIPS)
 for(i in 1:nrow(joined)){

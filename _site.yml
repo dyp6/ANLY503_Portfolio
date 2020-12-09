@@ -7,18 +7,37 @@ navbar:
       icon: fa-home
     - text: "About"
       href: about.html
-    - text: "Class Projects"
+    - text: "Class Work"
       icon: fa-book
       menu:
-        - text: "Analytic Data Visualization (ANLY503)"
+        - text: "Analytic Data Visualization Homeworks"
           icon: fas fa-chart-line
           menu:
+            - text: "First Sketching Homework"
+              icon: far fa-edit
+              href: Assignment_1.html
+            - text: "Second Sketching Homework"
+              icon: fas fa-edit
+              href: Assignment_3.html
+            - text: "Static Visualization Homework"
+              icon: far fa-chart-bar
+              menu:
+                - text: "First Task"
+                  href: task1.html
+                - text: "Second Task"
+                  href: task2.html
+                - text: "Third Task"
+                  href: task3.html
+                - text: "Fourth Task"
+                  href: task4.html
+                - text: "Fifth Task"
+                  href: task5.html
+            - text: "Network Creation Homework"
+              icon: fas fa-project-diagram
+              href: networks.html
             - text: "Geospatial Visualization Homework"  
               icon: far fa-map
               href: geospatial.html
-    - text: "Research Projects"
-      href: researchProj.html
-    - text: "Professional Projects"
-      href: workProj.html
+    - text: "Data Visualization Final Project"
 
 output_dir: "docs"
