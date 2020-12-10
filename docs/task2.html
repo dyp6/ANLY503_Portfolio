@@ -367,7 +367,9 @@ $(document).ready(function () {
     </li>
   </ul>
 </li>
-<li class="dropdown-header">Data Visualization Final Project</li>
+<li>
+  <a href="flexDashboard.html">Data Visualization Final Project</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -385,14 +387,17 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code>library(ggplot2)</code></pre>
+<pre class="r"><code>library(ggplot2)
+library(scales)</code></pre>
 <pre><code>## 
-## Attaching package: &#39;ggplot2&#39;</code></pre>
-<pre><code>## The following object is masked _by_ &#39;.GlobalEnv&#39;:
+## Attaching package: &#39;scales&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
 ## 
-##     scale_color_discrete</code></pre>
-<pre class="r"><code>library(scales)
-source(&quot;MyRtheme.R&quot;)
+##     discard</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     col_factor</code></pre>
+<pre class="r"><code>source(&quot;MyRtheme.R&quot;)
 aa &lt;- read.csv(&quot;data/accounts_analytical.csv&quot;)
 # Loan Distribution
 loans &lt;- subset(aa, !(is.na(loan_amount)))

@@ -39,5 +39,5 @@ navbar:
               icon: far fa-map
               href: geospatial.html
     - text: "Data Visualization Final Project"
-
+      href: flexDashboard.html
 output_dir: "docs"
