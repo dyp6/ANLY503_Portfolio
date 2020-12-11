@@ -368,7 +368,7 @@ $(document).ready(function () {
   </ul>
 </li>
 <li>
-  <a href="flexDashboard.html">Data Visualization Final Project</a>
+  <a href="https://centergforglobaldata.org">Data Visualization Final Project</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -388,16 +388,8 @@ $(document).ready(function () {
 
 
 <pre class="r"><code>library(ggplot2)
-library(scales)</code></pre>
-<pre><code>## 
-## Attaching package: &#39;scales&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:purrr&#39;:
-## 
-##     discard</code></pre>
-<pre><code>## The following object is masked from &#39;package:readr&#39;:
-## 
-##     col_factor</code></pre>
-<pre class="r"><code>source(&quot;MyRtheme.R&quot;)
+library(scales)
+source(&quot;MyRtheme.R&quot;)
 aa &lt;- read.csv(&quot;data/accounts_analytical.csv&quot;)
 # Loan Distribution
 loans &lt;- subset(aa, !(is.na(loan_amount)))

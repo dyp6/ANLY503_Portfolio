@@ -66,6 +66,6 @@ plt.tight_layout()
 plt.savefig("images/task_1_plot.png")
 ```
 ```{r,out.height="20%",out.width="65%",echo=FALSE}
-knitr::include_graphics("images/task_1_plot.png")
+knitr::include_graphics("img/task_1_plot.png")
 ```
 

@@ -10,8 +10,8 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r,out.height="40%",out.width="80%"}
-img_1_path <- "images/Assignment_11.png"
-img_2_path <- "images/Assignment_12.png"
+img_1_path <- "img/Assignment_11.png"
+img_2_path <- "img/Assignment_12.png"
 knitr::include_graphics(img_1_path)
 ```
 ```{r,out.height="40%",out.width="80%"}
