@@ -1,6 +1,6 @@
 name: "my-website"
 navbar:
-  title: "My Website"
+  title: "Analytic Data Visualization (Fall 2020) Classwork Portfolio"
   left:
     - text: "Home"
       href: index.html
@@ -39,5 +39,5 @@ navbar:
               icon: far fa-map
               href: geospatial.html
     - text: "Data Visualization Final Project"
-      href: https://centergforglobaldata.org
+      href: FinalProjectFlexdash.html
 output_dir: "docs"
